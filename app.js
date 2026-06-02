@@ -228,15 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const q = query || 'painting';
       
-      // We parallel fetch from Art Institute of Chicago and The Met APIs
-      const [chicagoResults, metResults] = await Promise.allSettled([
+      // We parallel fetch from Chicago, Met, and National Gallery of Art (Wikidata SPARQL)
+      const [chicagoResults, metResults, ngaResults] = await Promise.allSettled([
         fetchFromChicago(q),
-        fetchFromMet(q)
+        fetchFromMet(q),
+        fetchFromNGA(q)
       ]);
 
       let newArtworks = [];
       if (chicagoResults.status === 'fulfilled') newArtworks = [...newArtworks, ...chicagoResults.value];
       if (metResults.status === 'fulfilled') newArtworks = [...newArtworks, ...metResults.value];
+      if (ngaResults.status === 'fulfilled') newArtworks = [...newArtworks, ...ngaResults.value];
 
       if (newArtworks.length > 0) {
         // Add new items to state list
@@ -318,6 +320,80 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadUrl: obj.primaryImage,
         originalUrl: obj.objectURL
       }));
+  }
+
+  // National Gallery of Art (NGA) Wikidata SPARQL Adapter
+  async function fetchFromNGA(query) {
+    const q = query.toLowerCase().trim();
+    const filterClause = q && q !== 'painting' && q !== 'masterpiece' 
+      ? `FILTER(CONTAINS(LCASE(?itemLabel), "${q}") || CONTAINS(LCASE(?creatorLabel), "${q}"))`
+      : '';
+
+    const sparqlQuery = `
+      SELECT DISTINCT ?item ?itemLabel ?image ?creatorLabel ?date ?ngaId WHERE {
+        ?item wdt:P31 wd:Q3305213 . # painting
+        ?item wdt:P195 wd:Q214867 . # National Gallery of Art, Washington
+        ?item wdt:P18 ?image .
+        ?item wdt:P170 ?creator .
+        ?item wdt:P4643 ?ngaId . # NGA Artwork ID
+        OPTIONAL { ?item wdt:P571 ?inception . BIND(YEAR(?inception) AS ?date) }
+        ?item rdfs:label ?itemLabel . FILTER(LANG(?itemLabel) = "en")
+        ?creator rdfs:label ?creatorLabel . FILTER(LANG(?creatorLabel) = "en")
+        ${filterClause}
+      } LIMIT 10
+    `;
+
+    const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/sparql-results+json',
+        'User-Agent': 'PaintyWallpaperApp/1.0 (https://github.com/giuseppe/Painty)'
+      }
+    });
+    
+    if (!response.ok) return [];
+    const data = await response.json();
+    
+    if (!data.results || !data.results.bindings) return [];
+    
+    return data.results.bindings.map(binding => {
+      const rawImage = binding.image.value;
+      const downloadUrl = rawImage;
+      const previewUrl = getWikimediaThumbnail(rawImage, 1024);
+      
+      const rawNgaId = binding.ngaId ? binding.ngaId.value : '';
+      const id = rawNgaId ? `nga-${rawNgaId}` : `nga-${binding.item.value.split('/').pop()}`;
+      
+      return {
+        id: id,
+        title: binding.itemLabel.value,
+        artist: binding.creatorLabel.value || 'Unknown Artist',
+        year: binding.date ? binding.date.value : 'Unknown',
+        movement: 'Classical',
+        museum: 'National Gallery of Art, Washington D.C.',
+        museumCode: 'nga',
+        previewUrl: previewUrl,
+        downloadUrl: downloadUrl,
+        originalUrl: rawNgaId ? `https://www.nga.gov/collection/art-object-page.${rawNgaId}.html` : 'https://www.nga.gov/artworks/free-images-and-open-access'
+      };
+    });
+  }
+
+  // Helper: Get Resized Wikimedia Commons Thumbnail Link to optimize load speeds (LCP)
+  function getWikimediaThumbnail(imageUrl, width = 1024) {
+    if (!imageUrl.includes('upload.wikimedia.org')) return imageUrl;
+    if (imageUrl.includes('/thumb/')) return imageUrl;
+    
+    try {
+      const parts = imageUrl.split('/');
+      const filename = parts[parts.length - 1];
+      const hash1 = parts[parts.length - 3];
+      const hash2 = parts[parts.length - 2];
+      return `https://upload.wikimedia.org/wikipedia/commons/thumb/${hash1}/${hash2}/${filename}/${width}px-${filename}`;
+    } catch (e) {
+      return imageUrl;
+    }
   }
 
   // ==========================================
