@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Modal DOM Elements
   const previewModal = document.getElementById('preview-modal');
-  const modalClose = document.getElementById('modal-close');
   const modalArtworkImg = document.getElementById('modal-artwork-img');
   const modalImageLoader = document.getElementById('modal-image-loader');
   const modalMuseumBadge = document.getElementById('modal-museum-badge');
@@ -412,13 +411,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // MODAL DETAILS & DEVICE PREVIEW SYSTEM
   // ==========================================
 
+  const bootstrapModal = new bootstrap.Modal(previewModal);
+
   function openPreviewModal(art) {
     currentArtwork = art;
     
     // Populate text details
     modalMuseumBadge.textContent = art.museum;
     // Set museum badge theme
-    modalMuseumBadge.className = `museum-badge badge-${art.museumCode}`;
+    modalMuseumBadge.className = `badge badge-${art.museumCode} text-uppercase mb-3 small`;
     
     modalTitle.textContent = art.title;
     modalArtist.textContent = art.artist;
@@ -426,12 +427,12 @@ document.addEventListener('DOMContentLoaded', () => {
     modalOriginalLink.href = art.originalUrl;
 
     // Load preview image to modal
-    modalArtworkImg.classList.remove('loaded');
+    modalArtworkImg.style.opacity = '0';
     modalImageLoader.style.display = 'flex';
     modalArtworkImg.src = art.previewUrl;
     
     modalArtworkImg.onload = () => {
-      modalArtworkImg.classList.add('loaded');
+      modalArtworkImg.style.opacity = '1';
       modalImageLoader.style.display = 'none';
     };
 
@@ -441,31 +442,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply active device layout
     updateDeviceLayout();
 
-    // Show modal overlay
-    previewModal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Stop background scrolling
+    // Show modal using Bootstrap API
+    bootstrapModal.show();
   }
 
-  function closePreviewModal() {
-    previewModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+  // Clear active artwork when modal is hidden
+  previewModal.addEventListener('hidden.bs.modal', () => {
     currentArtwork = null;
-  }
-
-  modalClose.addEventListener('click', closePreviewModal);
-  
-  // Close modal when clicking outside card content
-  previewModal.addEventListener('click', (e) => {
-    if (e.target === previewModal) {
-      closePreviewModal();
-    }
-  });
-
-  // Keyboard shortcut to close modal
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && previewModal.style.display === 'flex') {
-      closePreviewModal();
-    }
   });
 
   // Device tab toggling
