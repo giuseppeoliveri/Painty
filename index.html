@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painty — High-Resolution Masterpiece Wallpapers</title>
+  <meta name="description" content="Browse, preview, and download high-resolution wallpapers of iconic paintings from world-renowned open-access archives including the Met, Rijksmuseum, NGA, Getty, and more.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <i data-lucide="paintpalette"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Painty</h1>
+          <span>Masterpiece Wallpaper Archive</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="https://github.com/giuseppe/Painty" target="_blank" class="github-link-btn" id="github-link">
+          <i data-lucide="github"></i> GitHub Project
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-container">
+      <h2>Transform Your Desktop & Phone Into a Gallery</h2>
+      <p class="hero-subtitle">
+        Discover and download ultra-high-resolution wallpapers of public domain masterpieces from the **National Gallery of Art**, **Rijksmuseum**, **J. Paul Getty Museum**, **The Met**, and other open access collections.
+      </p>
+
+      <!-- Search & Filters Bar -->
+      <div class="search-filter-card">
+        <div class="search-row">
+          <div class="search-input-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search by painting, artist, movement, or museum..." aria-label="Search artworks">
+            <button id="clear-search-btn" class="clear-search-btn" style="display: none;" aria-label="Clear search">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="filters-collapsible">
+          <!-- Museum Filter Toggles -->
+          <div class="filter-group">
+            <span class="filter-label">Museum Sources</span>
+            <div class="museum-filters-grid" id="museum-filters">
+              <button class="museum-btn active" data-museum="all">All Sources</button>
+              <button class="museum-btn" data-museum="met">The Met</button>
+              <button class="museum-btn" data-museum="chicago">Art Institute of Chicago</button>
+              <button class="museum-btn" data-museum="rijksmuseum">Rijksmuseum</button>
+              <button class="museum-btn" data-museum="nga">National Gallery of Art</button>
+              <button class="museum-btn" data-museum="getty">Getty Museum</button>
+              <button class="museum-btn" data-museum="other">Other Galleries</button>
+            </div>
+          </div>
+          
+          <!-- Category Pills -->
+          <div class="filter-group">
+            <span class="filter-label">Art Movements & Styles</span>
+            <div class="categories-list" id="category-filters">
+              <button class="category-pill active" data-category="all">All Styles</button>
+              <button class="category-pill" data-category="Impressionism">Impressionism</button>
+              <button class="category-pill" data-category="Post-Impressionism">Post-Impressionism</button>
+              <button class="category-pill" data-category="Renaissance">Renaissance</button>
+              <button class="category-pill" data-category="Baroque">Baroque</button>
+              <button class="category-pill" data-category="Landscape">Landscape</button>
+              <button class="category-pill" data-category="Realism">Realism</button>
+              <button class="category-pill" data-category="Ukiyo-e">Ukiyo-e (Japanese)</button>
+              <button class="category-pill" data-category="Modernism">Modernism</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Grid Section -->
+  <main class="gallery-section">
+    <div class="gallery-container">
+      <div class="gallery-header-info">
+        <h3 id="gallery-count-text">Loading masterpieces...</h3>
+        <div class="live-search-notice" id="live-search-indicator" style="display: none;">
+          <span class="pulse-dot"></span> Searching Live Museum Databases
+        </div>
+      </div>
+      
+      <!-- Skeletons / Loading -->
+      <div class="loading-container" id="loading-spinner">
+        <div class="spinner"></div>
+        <p>Retrieving high-resolution art...</p>
+      </div>
+
+      <!-- No Results State -->
+      <div class="no-results-container" id="no-results" style="display: none;">
+        <i data-lucide="image-off" class="empty-icon"></i>
+        <h4>No masterpieces found</h4>
+        <p>Try refining your search terms or toggling other museum sources.</p>
+        <button id="reset-filters-btn" class="primary-btn">Reset All Filters</button>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="artwork-grid" id="artwork-grid" style="display: none;">
+        <!-- Card items will be inserted dynamically by app.js -->
+      </div>
+      
+      <!-- Infinite Scroll Trigger / Load More -->
+      <div class="load-more-container" id="load-more-area" style="display: none;">
+        <button id="load-more-btn" class="outline-btn">
+          <i data-lucide="plus"></i> Load More From Live Archives
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 Painty. Made for high-resolution desktop and mobile wallpaper downloads.</p>
+      <p class="footer-disclaimer">
+        All images are sourced from public domain, open-access museum archives (CC0 or equivalent). Artwork copyright remains in the public domain. We are deeply grateful to the Metropolitan Museum of Art, Art Institute of Chicago, Rijksmuseum, National Gallery of Art, and the J. Paul Getty Trust for sharing their digital collections with the world.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Details & Preview Modal -->
+  <div class="modal-overlay" id="preview-modal" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modal-close" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+      
+      <div class="modal-body">
+        
+        <!-- Left: Image Preview Area -->
+        <div class="modal-image-panel">
+          <div class="image-wrapper">
+            <img id="modal-artwork-img" src="" alt="Painting Preview">
+            <div class="image-loader" id="modal-image-loader">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right: Control / Info Panel -->
+        <div class="modal-info-panel">
+          <div class="info-header">
+            <span class="museum-badge" id="modal-museum-badge">Museum</span>
+            <h3 id="modal-title">Painting Title</h3>
+            <p class="artist-name" id="modal-artist">Artist Name</p>
+            <p class="artwork-meta" id="modal-meta">Year &bull; Movement</p>
+          </div>
+          
+          <!-- Device Preview Workspace -->
+          <div class="device-preview-workspace">
+            <div class="preview-tabs">
+              <span class="workspace-title">Wallpaper Preview Mockup</span>
+              <div class="tab-buttons">
+                <button class="tab-btn active" id="tab-desktop" data-device="desktop">
+                  <i data-lucide="monitor"></i> Mac Desktop
+                </button>
+                <button class="tab-btn" id="tab-mobile" data-device="mobile">
+                  <i data-lucide="smartphone"></i> iPhone
+                </button>
+              </div>
+            </div>
+            
+            <!-- Live Preview Screen -->
+            <div class="screen-frame desktop-mode" id="screen-frame">
+              <div class="wallpaper-bg" id="preview-wallpaper"></div>
+              
+              <!-- Mock macOS Overlay -->
+              <div class="macos-overlay" id="macos-overlay">
+                <div class="macos-menu-bar">
+                  <div class="menu-left">
+                    <span class="apple-logo"></span>
+                    <span class="bold">Finder</span>
+                    <span>File</span>
+                    <span>Edit</span>
+                    <span>View</span>
+                    <span>Go</span>
+                  </div>
+                  <div class="menu-right">
+                    <i data-lucide="wifi" class="mini-icon"></i>
+                    <i data-lucide="battery" class="mini-icon"></i>
+                    <span id="macos-time">15:15</span>
+                  </div>
+                </div>
+                <div class="macos-mock-window">
+                  <div class="win-header">
+                    <div class="win-buttons">
+                      <span class="win-btn close"></span>
+                      <span class="win-btn minimize"></span>
+                      <span class="win-btn zoom"></span>
+                    </div>
+                    <span class="win-title">Wallpaper Preview</span>
+                  </div>
+                  <div class="win-content">
+                    <p class="placeholder-text">This is a mock screen preview. Download the wallpaper to apply it to your real computer!</p>
+                  </div>
+                </div>
+                <div class="macos-dock">
+                  <div class="dock-app finder"></div>
+                  <div class="dock-app safari"></div>
+                  <div class="dock-app mail"></div>
+                  <div class="dock-app messages"></div>
+                  <div class="dock-app maps"></div>
+                  <div class="dock-app photos"></div>
+                  <div class="dock-app music"></div>
+                  <div class="dock-app settings"></div>
+                </div>
+              </div>
+              
+              <!-- Mock iOS Overlay -->
+              <div class="ios-overlay" id="ios-overlay" style="display: none;">
+                <div class="ios-status-bar">
+                  <span id="ios-time-status">09:41</span>
+                  <div class="status-icons">
+                    <i data-lucide="wifi" class="mini-icon"></i>
+                    <i data-lucide="battery" class="mini-icon"></i>
+                  </div>
+                </div>
+                <div class="ios-lock-screen">
+                  <div class="lock-date" id="ios-lock-date">Tuesday, June 2</div>
+                  <div class="lock-clock" id="ios-lock-clock">09:41</div>
+                  
+                  <div class="lock-widgets">
+                    <div class="lock-widget">
+                      <i data-lucide="sun"></i> 22°
+                    </div>
+                    <div class="lock-widget">
+                      <i data-lucide="activity"></i> 7,850
+                    </div>
+                  </div>
+                  
+                  <div class="ios-home-bar"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Preview Controls -->
+            <div class="preview-options">
+              <button class="toggle-overlay-btn" id="toggle-overlay-btn">
+                <i data-lucide="eye-off"></i> Hide Mock Desktop Icons
+              </button>
+            </div>
+          </div>
+          
+          <!-- Actions Panel -->
+          <div class="modal-actions-area">
+            <button class="primary-btn download-btn" id="download-btn">
+              <i data-lucide="download"></i> Download HD Wallpaper
+            </button>
+            
+            <a href="#" target="_blank" class="outline-btn link-btn" id="modal-original-link">
+              <i data-lucide="external-link"></i> View Original Museum Page
+            </a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript -->
+  <script src="artworks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
