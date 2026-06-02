@@ -147,14 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <div class="card-image-wrapper">
           <div class="shimmer" id="shimmer-${art.id}"></div>
-          <img src="${art.previewUrl}" alt="${art.title}" loading="lazy" id="img-${art.id}">
+          <img src="${art.previewUrl}" alt="${art.title} by ${art.artist}, collection of ${art.museum}" loading="lazy" id="img-${art.id}">
           <div class="card-overlay">
             <span class="museum-badge badge-${art.museumCode}">${getMuseumInitials(art.museumCode)}</span>
             <div class="overlay-action-group">
-              <button class="overlay-btn preview-btn" title="Preview Wallpaper">
+              <button class="overlay-btn preview-btn" title="Preview Wallpaper" aria-label="Preview ${art.title} on a device screen">
                 <i data-lucide="eye"></i>
               </button>
-              <button class="overlay-btn dl-btn" title="Download HD">
+              <button class="overlay-btn dl-btn" title="Download HD" aria-label="Download high-resolution wallpaper of ${art.title}">
                 <i data-lucide="download"></i>
               </button>
             </div>
@@ -228,17 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const q = query || 'painting';
       
-      // We parallel fetch from Chicago, Met, and National Gallery of Art (Wikidata SPARQL)
-      const [chicagoResults, metResults, ngaResults] = await Promise.allSettled([
+      // We parallel fetch from Chicago, Met, and Wikidata collections (NGA, Rijks, Getty)
+      const [chicagoResults, metResults, wikidataResults] = await Promise.allSettled([
         fetchFromChicago(q),
         fetchFromMet(q),
-        fetchFromNGA(q)
+        fetchFromWikidata(q)
       ]);
 
       let newArtworks = [];
       if (chicagoResults.status === 'fulfilled') newArtworks = [...newArtworks, ...chicagoResults.value];
       if (metResults.status === 'fulfilled') newArtworks = [...newArtworks, ...metResults.value];
-      if (ngaResults.status === 'fulfilled') newArtworks = [...newArtworks, ...ngaResults.value];
+      if (wikidataResults.status === 'fulfilled') newArtworks = [...newArtworks, ...wikidataResults.value];
 
       if (newArtworks.length > 0) {
         // Add new items to state list
@@ -322,25 +322,46 @@ document.addEventListener('DOMContentLoaded', () => {
       }));
   }
 
-  // National Gallery of Art (NGA) Wikidata SPARQL Adapter
-  async function fetchFromNGA(query) {
+  // Wikidata SPARQL Adapter (Fetches live items from Rijksmuseum, NGA, and Getty collections)
+  async function fetchFromWikidata(query) {
     const q = query.toLowerCase().trim();
+    
+    // Determine which museum collections to query based on active filter
+    let collectionsFilter = '';
+    if (selectedMuseum === 'rijksmuseum') {
+      collectionsFilter = '(wd:Q190804 "rijksmuseum" "Rijksmuseum")';
+    } else if (selectedMuseum === 'nga') {
+      collectionsFilter = '(wd:Q214867 "nga" "National Gallery of Art, Washington D.C.")';
+    } else if (selectedMuseum === 'getty') {
+      collectionsFilter = '(wd:Q512684 "getty" "J. Paul Getty Museum")';
+    } else {
+      // Default: Search across all three Wikidata archives to supplement local grid
+      collectionsFilter = `
+        (wd:Q214867 "nga" "National Gallery of Art, Washington D.C.")
+        (wd:Q190804 "rijksmuseum" "Rijksmuseum")
+        (wd:Q512684 "getty" "J. Paul Getty Museum")
+      `;
+    }
+
     const filterClause = q && q !== 'painting' && q !== 'masterpiece' 
       ? `FILTER(CONTAINS(LCASE(?itemLabel), "${q}") || CONTAINS(LCASE(?creatorLabel), "${q}"))`
       : '';
 
     const sparqlQuery = `
-      SELECT DISTINCT ?item ?itemLabel ?image ?creatorLabel ?date ?ngaId WHERE {
+      SELECT DISTINCT ?item ?itemLabel ?image ?creatorLabel ?date ?museumCode ?museumLabel ?officialUrl WHERE {
         ?item wdt:P31 wd:Q3305213 . # painting
-        ?item wdt:P195 wd:Q214867 . # National Gallery of Art, Washington
+        ?item wdt:P195 ?museum .
+        VALUES (?museum ?museumCode ?museumLabel) {
+          ${collectionsFilter}
+        }
         ?item wdt:P18 ?image .
         ?item wdt:P170 ?creator .
-        ?item wdt:P4643 ?ngaId . # NGA Artwork ID
         OPTIONAL { ?item wdt:P571 ?inception . BIND(YEAR(?inception) AS ?date) }
+        OPTIONAL { ?item wdt:P973 ?officialUrl }
         ?item rdfs:label ?itemLabel . FILTER(LANG(?itemLabel) = "en")
         ?creator rdfs:label ?creatorLabel . FILTER(LANG(?creatorLabel) = "en")
         ${filterClause}
-      } LIMIT 10
+      } LIMIT 12
     `;
 
     const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
@@ -362,8 +383,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const downloadUrl = rawImage;
       const previewUrl = getWikimediaThumbnail(rawImage, 1024);
       
-      const rawNgaId = binding.ngaId ? binding.ngaId.value : '';
-      const id = rawNgaId ? `nga-${rawNgaId}` : `nga-${binding.item.value.split('/').pop()}`;
+      const museumCode = binding.museumCode.value;
+      const id = `${museumCode}-${binding.item.value.split('/').pop()}`;
+      
+      let fallbackUrl = 'https://www.nga.gov';
+      if (museumCode === 'rijksmuseum') fallbackUrl = 'https://www.rijksmuseum.nl';
+      if (museumCode === 'getty') fallbackUrl = 'https://www.getty.edu';
       
       return {
         id: id,
@@ -371,11 +396,11 @@ document.addEventListener('DOMContentLoaded', () => {
         artist: binding.creatorLabel.value || 'Unknown Artist',
         year: binding.date ? binding.date.value : 'Unknown',
         movement: 'Classical',
-        museum: 'National Gallery of Art, Washington D.C.',
-        museumCode: 'nga',
+        museum: binding.museumLabel.value,
+        museumCode: museumCode,
         previewUrl: previewUrl,
         downloadUrl: downloadUrl,
-        originalUrl: rawNgaId ? `https://www.nga.gov/collection/art-object-page.${rawNgaId}.html` : 'https://www.nga.gov/artworks/free-images-and-open-access'
+        originalUrl: binding.officialUrl ? binding.officialUrl.value : fallbackUrl
       };
     });
   }
@@ -438,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyFiltersAndRender();
 
     // Trigger API fetch for active museum query if they aren't looking at local all catalog
-    if (selectedMuseum !== 'all' && selectedMuseum !== 'other' && selectedMuseum !== 'rijksmuseum') {
+    if (selectedMuseum !== 'all' && selectedMuseum !== 'other') {
       fetchLiveArtworks(searchQuery || 'masterpiece');
     }
   });
@@ -501,6 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalArtist.textContent = art.artist;
     modalMeta.innerHTML = `${art.year} &bull; ${art.movement}`;
     modalOriginalLink.href = art.originalUrl;
+    modalArtworkImg.alt = `${art.title} by ${art.artist}, collection of ${art.museum}`;
 
     // Load preview image to modal
     modalArtworkImg.style.opacity = '0';

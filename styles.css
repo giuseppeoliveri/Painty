@@ -180,7 +180,8 @@ body, input, select, textarea, span {
   transition: opacity var(--transition-fast);
 }
 
-.artwork-card:hover .card-overlay {
+.artwork-card:hover .card-overlay,
+.artwork-card:focus-within .card-overlay {
   opacity: 1;
 }
 
@@ -200,6 +201,16 @@ body, input, select, textarea, span {
 
 .overlay-btn:hover {
   transform: scale(1.08);
+}
+
+.overlay-btn:focus-visible {
+  outline: 2.5px solid var(--accent-gold) !important;
+  outline-offset: 2.5px;
+  box-shadow: none !important;
+}
+
+.overlay-btn:active {
+  transform: scale(0.92);
 }
 
 .overlay-btn i {
