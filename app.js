@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // 3. Category/Movement Filter
       const matchCategory = selectedCategory === 'all' || 
-        art.movement.toLowerCase() === selectedCategory.toLowerCase();
+        art.movement.toLowerCase().includes(selectedCategory.toLowerCase());
 
       return matchQuery && matchMuseum && matchCategory;
     });
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loadMoreArea.style.display = searchQuery ? 'block' : 'none'; // Allow search API fallback
     } else {
       noResultsContainer.style.display = 'none';
-      artworkGrid.style.display = 'grid';
+      artworkGrid.style.display = 'flex';
       galleryCountText.textContent = `Showing ${filteredArtworks.length} wallpaper${filteredArtworks.length > 1 ? 's' : ''}`;
       loadMoreArea.style.display = (searchQuery || selectedMuseum !== 'all') ? 'block' : 'none';
       renderGridItems(filteredArtworks);
