@@ -269,8 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!searchData.objectIDs || searchData.objectIDs.length === 0) return [];
     
     const total = searchData.objectIDs.length;
-    const startIdx = Math.floor(Math.random() * Math.max(1, total - 12));
-    const objectIds = searchData.objectIDs.slice(startIdx, startIdx + 12);
+    const startIdx = Math.floor(Math.random() * Math.max(1, total - 25));
+    const objectIds = searchData.objectIDs.slice(startIdx, startIdx + 25);
     
     const detailPromises = objectIds.map(async (id) => {
       try {
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Art Institute of Chicago API Adapter
   async function fetchFromChicago(query) {
-    const url = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(query)}&query[term][is_public_domain]=true&limit=12&fields=id,title,artist_title,date_display,image_id,style_title`;
+    const url = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(query)}&query[term][is_public_domain]=true&limit=35&fields=id,title,artist_title,date_display,image_id,style_title`;
     const response = await fetch(url);
     const data = await response.json();
     
@@ -333,8 +333,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!searchData.objectIDs || searchData.objectIDs.length === 0) return [];
     
-    // Take the top 8 objects to avoid spamming network requests
-    const objectIds = searchData.objectIDs.slice(0, 8);
+    // Take the top 25 objects to avoid spamming network requests
+    const objectIds = searchData.objectIDs.slice(0, 25);
     
     // 2. Fetch object details in parallel
     const detailPromises = objectIds.map(async (id) => {
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ?item rdfs:label ?itemLabel . FILTER(LANG(?itemLabel) = "en")
         ?creator rdfs:label ?creatorLabel . FILTER(LANG(?creatorLabel) = "en")
         ${filterClause}
-      } LIMIT 12
+      } LIMIT 40
     `;
 
     const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
