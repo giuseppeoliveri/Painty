@@ -20,8 +20,16 @@
 body {
   font-family: var(--font-inter);
   background-color: var(--bg-color) !important;
-  font-size: 0.925rem;
-  letter-spacing: -0.01em;
+  font-size: 1rem; /* Base paragraph size of 16px */
+  line-height: 1.6; /* Line height 1.6 for readability */
+  letter-spacing: -0.011em;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 75ch; /* Limit width of paragraph text for readability */
+  font-weight: 400; /* Regular */
 }
 
 /* Custom Spacing and Layout Typographies */
@@ -33,13 +41,38 @@ body {
   letter-spacing: 0.2em;
 }
 
-h1, h2, h3, h4, h5, h6, .btn, .nav-link, label {
+/* Weight Hierarchy */
+h1, h2, .h1, .h2, .display-5 {
   font-family: var(--font-inter) !important;
+  font-weight: 800 !important; /* Extra Bold */
+}
+
+h3, h4, h5, h6, .h3, .h4, .h5, .h6, .btn, .nav-link, label, .modal-title {
+  font-family: var(--font-inter) !important;
+  font-weight: 600 !important; /* Semi Bold */
+}
+
+/* Global button tap target compliance (minimum 44x44px area) */
+.btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body, input, select, textarea, span {
+  font-family: var(--font-inter) !important;
+  font-weight: 400; /* Regular */
 }
 
 .logo-icon {
   width: 34px;
   height: 34px;
+}
+
+/* High Contrast Muted Colors (WCAG Level AA Compliant: >= 4.5:1 ratio) */
+.text-muted {
+  color: #8c909e !important;
 }
 
 /* Search and Filters Custom overrides */
@@ -49,14 +82,34 @@ h1, h2, h3, h4, h5, h6, .btn, .nav-link, label {
 
 .input-group {
   border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: border-color var(--transition-fast), outline var(--transition-fast);
 }
 
 .input-group:focus-within {
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  border-color: #fff !important;
+  outline: 2px solid rgba(255, 255, 255, 0.3) !important;
+  outline-offset: 1px;
+}
+
+/* Accessible Interactive Focus States */
+.btn:focus-visible, a:focus-visible {
+  outline: 2.5px solid var(--accent-gold) !important;
+  outline-offset: 1.5px;
+  box-shadow: none !important;
 }
 
 .form-control::placeholder {
   color: #555866;
+}
+
+/* Accessible Filters Tap Targets: minimum 44px height */
+#museum-filters button, #category-filters button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
 }
 
 .btn-outline-secondary {
@@ -135,8 +188,8 @@ h1, h2, h3, h4, h5, h6, .btn, .nav-link, label {
   background: #fff;
   color: #000;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 44px; /* Minimum clickable tap area of 44x44px */
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -150,8 +203,8 @@ h1, h2, h3, h4, h5, h6, .btn, .nav-link, label {
 }
 
 .overlay-btn i {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 .overlay-btn.preview-btn {
