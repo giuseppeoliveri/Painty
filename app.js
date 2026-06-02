@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateLiveClocks, 30000); // Update clock every 30 seconds
   applyFiltersAndRender();
 
+  // Fetch featured artworks from live archives in the background on startup
+  fetchFeaturedArtworks();
+
   // ==========================================
   // CLOCK LOGIC
   // ==========================================
@@ -255,6 +258,76 @@ document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       applyFiltersAndRender();
     }
+  }
+
+  // Fetch featured masterpieces in parallel on page load
+  async function fetchFeaturedArtworks() {
+    isFetching = true;
+    liveSearchIndicator.style.display = 'flex';
+    
+    try {
+      // Parallel fetch from all three live sources (Chicago, Met highlights, and Wikidata SPARQL)
+      const [chicagoResults, metResults, wikidataResults] = await Promise.allSettled([
+        fetchFromChicago('painting'),
+        fetchFeaturedMetArtworks(),
+        fetchFromWikidata('painting')
+      ]);
+
+      let newArtworks = [];
+      if (chicagoResults.status === 'fulfilled') newArtworks = [...newArtworks, ...chicagoResults.value];
+      if (metResults.status === 'fulfilled') newArtworks = [...newArtworks, ...metResults.value];
+      if (wikidataResults.status === 'fulfilled') newArtworks = [...newArtworks, ...wikidataResults.value];
+
+      if (newArtworks.length > 0) {
+        apiArtworks = [...apiArtworks, ...newArtworks];
+      }
+    } catch (e) {
+      console.warn("Featured background fetch failed:", e);
+    } finally {
+      isFetching = false;
+      liveSearchIndicator.style.display = 'none';
+      applyFiltersAndRender();
+    }
+  }
+
+  // Helper: Fetch a randomized set of high-resolution Met public domain highlights
+  async function fetchFeaturedMetArtworks() {
+    const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=painting&isHighlight=true&hasImages=true`;
+    const searchResponse = await fetch(searchUrl);
+    const searchData = await searchResponse.json();
+    
+    if (!searchData.objectIDs || searchData.objectIDs.length === 0) return [];
+    
+    const total = searchData.objectIDs.length;
+    const startIdx = Math.floor(Math.random() * Math.max(1, total - 12));
+    const objectIds = searchData.objectIDs.slice(startIdx, startIdx + 12);
+    
+    const detailPromises = objectIds.map(async (id) => {
+      try {
+        const detailUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+        const res = await fetch(detailUrl);
+        return await res.json();
+      } catch (e) {
+        return null;
+      }
+    });
+    
+    const objects = await Promise.all(detailPromises);
+    
+    return objects
+      .filter(obj => obj && obj.primaryImage && obj.isPublicDomain)
+      .map(obj => ({
+        id: `met-${obj.objectID}`,
+        title: obj.title,
+        artist: obj.artistDisplayName || 'Unknown Artist',
+        year: obj.objectDate || 'Unknown',
+        movement: obj.classification || 'Landscape',
+        museum: 'The Metropolitan Museum of Art',
+        museumCode: 'met',
+        previewUrl: obj.primaryImageSmall || obj.primaryImage,
+        downloadUrl: obj.primaryImage,
+        originalUrl: obj.objectURL
+      }));
   }
 
   // Art Institute of Chicago API Adapter
