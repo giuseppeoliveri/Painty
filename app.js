@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let apiArtworks = [];
   let currentArtwork = null;
   let deviceMode = 'desktop';
-  let showOverlay = true;
   let searchQuery = '';
   let selectedMuseum = 'all';
   let selectedCategory = 'all';
@@ -47,45 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabMobile = document.getElementById('tab-mobile');
   const screenFrame = document.getElementById('screen-frame');
   const previewWallpaper = document.getElementById('preview-wallpaper');
-  const macosOverlay = document.getElementById('macos-overlay');
-  const iosOverlay = document.getElementById('ios-overlay');
-  const toggleOverlayBtn = document.getElementById('toggle-overlay-btn');
-  const macosTimeEl = document.getElementById('macos-time');
-  const iosTimeEl = document.getElementById('ios-time-status');
-  const iosLockClockEl = document.getElementById('ios-lock-clock');
-  const iosLockDateEl = document.getElementById('ios-lock-date');
 
   // Initialize Lucide Icons
   lucide.createIcons();
 
   // Initial setup
-  updateLiveClocks();
-  setInterval(updateLiveClocks, 30000); // Update clock every 30 seconds
   applyFiltersAndRender();
 
   // Fetch featured artworks from live archives in the background on startup
   fetchFeaturedArtworks();
-
-  // ==========================================
-  // CLOCK LOGIC
-  // ==========================================
-  function updateLiveClocks() {
-    const now = new Date();
-    
-    // Format Time: 15:15 or 09:41
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const timeStr = `${hours}:${minutes}`;
-
-    macosTimeEl.textContent = timeStr;
-    iosTimeEl.textContent = timeStr;
-    iosLockClockEl.textContent = timeStr;
-
-    // Format Date: e.g. "Tuesday, June 2"
-    const options = { weekday: 'long', month: 'long', day: 'numeric' };
-    const dateStr = now.toLocaleDateString('en-US', options);
-    iosLockDateEl.textContent = dateStr;
-  }
 
   // ==========================================
   // ARTWORK GRID RENDERING & FILTERING
@@ -650,34 +619,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deviceMode === 'desktop') {
       screenFrame.classList.add('desktop-mode');
       screenFrame.classList.remove('mobile-mode');
-      macosOverlay.style.display = 'flex';
-      iosOverlay.style.display = 'none';
     } else {
       screenFrame.classList.add('mobile-mode');
       screenFrame.classList.remove('desktop-mode');
-      macosOverlay.style.display = 'none';
-      iosOverlay.style.display = 'flex';
-    }
-
-    if (!showOverlay) {
-      screenFrame.classList.add('hide-overlay');
-    } else {
-      screenFrame.classList.remove('hide-overlay');
     }
   }
 
-  // Toggle Overlay button
-  toggleOverlayBtn.addEventListener('click', () => {
-    showOverlay = !showOverlay;
-    if (showOverlay) {
-      screenFrame.classList.remove('hide-overlay');
-      toggleOverlayBtn.innerHTML = `<i data-lucide="eye-off"></i> Hide Mock Desktop Icons`;
-    } else {
-      screenFrame.classList.add('hide-overlay');
-      toggleOverlayBtn.innerHTML = `<i data-lucide="eye"></i> Show Mock Desktop Icons`;
-    }
-    lucide.createIcons();
-  });
 
   // ==========================================
   // CROSS-ORIGIN HD DOWNLOAD TRIGGER
