@@ -95,11 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show spinner while sorting
     loadingSpinner.style.display = 'none';
     
-    // Combine curated and live-fetched artworks, removing duplicates by ID
+    // Combine live-fetched artworks, removing duplicates by ID (ignoring broken curated data)
     const allAvailable = [];
     const ids = new Set();
     
-    [...curatedArtworks, ...apiArtworks].forEach(art => {
+    [...apiArtworks].forEach(art => {
       if (!ids.has(art.id)) {
         ids.add(art.id);
         allAvailable.push(art);
@@ -108,13 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Apply Filter Rules
     filteredArtworks = allAvailable.filter(art => {
-      // 1. Search Query
+      // 1. Search Query (Tokenized Indexing)
       const q = searchQuery.toLowerCase().trim();
-      const matchQuery = q === '' || 
-        art.title.toLowerCase().includes(q) || 
-        art.artist.toLowerCase().includes(q) || 
-        art.movement.toLowerCase().includes(q) || 
-        art.museum.toLowerCase().includes(q);
+      let matchQuery = true;
+      if (q !== '') {
+        const tokens = q.split(/\s+/);
+        const indexText = `${art.title} ${art.artist} ${art.movement} ${art.museum}`.toLowerCase();
+        matchQuery = tokens.every(token => indexText.includes(token));
+      }
       
       // 2. Museum Filter
       const matchMuseum = selectedMuseum === 'all' || art.museumCode === selectedMuseum;
@@ -484,11 +485,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imageUrl.includes('/thumb/')) return imageUrl;
     
     try {
-      const parts = imageUrl.split('/');
-      const filename = parts[parts.length - 1];
-      const hash1 = parts[parts.length - 3];
-      const hash2 = parts[parts.length - 2];
-      return `https://upload.wikimedia.org/wikipedia/commons/thumb/${hash1}/${hash2}/${filename}/${width}px-${filename}`;
+      const fileName = imageUrl.split('/').pop();
+      const encodedFileName = encodeURIComponent(decodeURIComponent(fileName));
+      return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodedFileName}&width=${width}`;
     } catch (e) {
       return imageUrl;
     }
@@ -649,11 +648,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateDeviceLayout() {
     if (deviceMode === 'desktop') {
-      screenFrame.className = 'screen-frame desktop-mode';
+      screenFrame.classList.add('desktop-mode');
+      screenFrame.classList.remove('mobile-mode');
       macosOverlay.style.display = 'flex';
       iosOverlay.style.display = 'none';
     } else {
-      screenFrame.className = 'screen-frame mobile-mode';
+      screenFrame.classList.add('mobile-mode');
+      screenFrame.classList.remove('desktop-mode');
       macosOverlay.style.display = 'none';
       iosOverlay.style.display = 'flex';
     }
