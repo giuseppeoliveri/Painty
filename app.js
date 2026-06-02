@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     items.forEach(art => {
       const card = document.createElement('div');
-      card.className = 'artwork-card';
+      card.className = 'col artwork-card';
       card.innerHTML = `
         <div class="card-image-wrapper">
           <div class="shimmer" id="shimmer-${art.id}"></div>
@@ -534,6 +534,12 @@ document.addEventListener('DOMContentLoaded', () => {
     modalArtworkImg.src = art.previewUrl;
     
     modalArtworkImg.onload = () => {
+      modalArtworkImg.style.opacity = '1';
+      modalImageLoader.style.display = 'none';
+    };
+
+    modalArtworkImg.onerror = () => {
+      modalArtworkImg.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800&auto=format&fit=crop';
       modalArtworkImg.style.opacity = '1';
       modalImageLoader.style.display = 'none';
     };

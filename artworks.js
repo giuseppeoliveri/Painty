@@ -7,8 +7,8 @@ const curatedArtworks = [
     movement: "Post-Impressionism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP-21132-001.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP-21132-001.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_with_a_Straw_Hat_-_Google_Art_Project.jpg/1024px-Vincent_van_Gogh_-_Self-Portrait_with_a_Straw_Hat_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b2/Vincent_van_Gogh_-_Self-Portrait_with_a_Straw_Hat_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/436532"
   },
   {
@@ -19,8 +19,8 @@ const curatedArtworks = [
     movement: "Post-Impressionism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP130965.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP130965.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Vincent_Van_Gogh_-_Wheat_Field_with_Cypresses_-_Google_Art_Project.jpg/1024px-Vincent_Van_Gogh_-_Wheat_Field_with_Cypresses_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Vincent_Van_Gogh_-_Wheat_Field_with_Cypresses_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/436535"
   },
   {
@@ -31,8 +31,8 @@ const curatedArtworks = [
     movement: "Impressionism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP-19542-001.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP-19542-001.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Claude_Monet_-_Bridge_over_a_Pond_of_Water_Lilies_-_Google_Art_Project.jpg/1024px-Claude_Monet_-_Bridge_over_a_Pond_of_Water_Lilies_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Claude_Monet_-_Bridge_over_a_Pond_of_Water_Lilies_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/437127"
   },
   {
@@ -43,8 +43,8 @@ const curatedArtworks = [
     movement: "Impressionism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP-21473-001.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP-21473-001.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Claude_Monet_-_The_Parc_Monceau_-_Google_Art_Project.jpg/1024px-Claude_Monet_-_The_Parc_Monceau_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Claude_Monet_-_The_Parc_Monceau_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/437122"
   },
   {
@@ -55,8 +55,8 @@ const curatedArtworks = [
     movement: "Ukiyo-e",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/as/web-large/DP130155.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/as/original/DP130155.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Katsushika_Hokusai_-_Under_the_Wave_off_Kanagawa_-_Google_Art_Project.jpg/1024px-Katsushika_Hokusai_-_Under_the_Wave_off_Kanagawa_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Katsushika_Hokusai_-_Under_the_Wave_off_Kanagawa_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/45434"
   },
   {
@@ -67,8 +67,8 @@ const curatedArtworks = [
     movement: "Baroque",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14631-001.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP-14631-001.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Johannes_Vermeer_-_Study_of_a_Young_Woman_-_Google_Art_Project.jpg/1024px-Johannes_Vermeer_-_Study_of_a_Young_Woman_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/5/52/Johannes_Vermeer_-_Study_of_a_Young_Woman_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/437879"
   },
   {
@@ -79,8 +79,8 @@ const curatedArtworks = [
     movement: "Post-Impressionism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14286-015.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP-14286-015.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Georges_Seurat_-_Circus_Sideshow_-_Google_Art_Project.jpg/1024px-Georges_Seurat_-_Circus_Sideshow_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/a/af/Georges_Seurat_-_Circus_Sideshow_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/437654"
   },
   {
@@ -91,8 +91,8 @@ const curatedArtworks = [
     movement: "Landscape",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ep/web-large/DP143194.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ep/original/DP143194.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Thomas_Cole_-_The_Oxbow_-_Google_Art_Project.jpg/1024px-Thomas_Cole_-_The_Oxbow_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Thomas_Cole_-_The_Oxbow_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/10497"
   },
   {
@@ -103,8 +103,8 @@ const curatedArtworks = [
     movement: "Realism",
     museum: "The Metropolitan Museum of Art",
     museumCode: "met",
-    previewUrl: "https://images.metmuseum.org/CRDImages/ag/web-large/DP-14286-091.jpeg",
-    downloadUrl: "https://images.metmuseum.org/CRDImages/ag/original/DP-14286-091.jpg",
+    previewUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/John_Singer_Sargent_-_Madame_X_%28Madame_Pierre_Gautreau%29_-_Google_Art_Project.jpg/1024px-John_Singer_Sargent_-_Madame_X_%28Madame_Pierre_Gautreau%29_-_Google_Art_Project.jpg",
+    downloadUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ec/John_Singer_Sargent_-_Madame_X_%28Madame_Pierre_Gautreau%29_-_Google_Art_Project.jpg",
     originalUrl: "https://www.metmuseum.org/art/collection/search/12127"
   },
   {
